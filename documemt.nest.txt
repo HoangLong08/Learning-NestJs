@@ -1,0 +1,101 @@
+Trong nestJs cung cấp 2 plaftform chính express và fastify
+
+2 framework viết be cho nodejs là express và fastify
+
+nestjs lấy lõi express phát triển thành nestjs hiện nay
+nestjs dùng thư viên rimraf để build folder dist
+
+$ npm i -g @nestjs/cli
+$ nest new project-name (// npx @nestjs/cli new project-name)
+
+npm install --save @nestjs/typeorm typeorm pg
+
+
+(https://docs.nestjs.com/cli/usages)
+nest g module modules/users(tên module)
+nest g controller modules/users
+nest g service modules/users
+nest g resource modules/user // nó sẽ tạo ra file .controller .module .service .entity .dto
+
+trong file nest-cli.json // cái disable file .spec khi generate 1 service hoặc resource
+"generateOptions": {
+    "spec": {
+      "service": false,
+      "controller": false
+    }
+  }
+
+https://orkhan.gitbook.io/typeorm/docs/listeners-and-subscribers     // cái ni hay
+
+file package.json
+"typeorm": "yarn build && npx typeorm -d dist/db/data-source.js",
+"migration:generate": "yarn typeorm -- migration:generate",
+"migration:run": "yarn typeorm -- migration:run",
+"migration:revert": "yarn typeorm -- migration:revert"
+
+yarn run migration:generate db/migrations/create_user_feed_tag (mới tạo file .migration)
+yarn run migration:run (chạy  migration) (nếu đã run lại migration thì nhớ xóa folder đã run migration trước đó)
+Khi nào sửa các file liên quan đến database (.entity hoặc relation) thì chạy
+lại 2 câu lệnh như ở trên và nhớ đặt tên file cho dễ hiểu để còn revert lại
+
+npm install typeorm-extension --save // seeder database
+
+file main.ts để chạy server
+import { AppModule } from './app.module';
+NestFactory.create(AppModule)
+
+
+pipe, class tranform, class validator
+tranform: chuyển đổi kiểu dữ liệu
+validator: để is valid dự liệu
+pipe: 3 khu vực để thực hiện pige này: param, controller, global
+  @UsePipes(new ValidationPipe()) dùng trong controller
+  app.useGlobalPipes(new ValidationPipe()); dùng global
+
+
+
+dto: định nghĩa cấu trúc dữ liệu mà các thành phần khác nhau có thể sử dụng
+từ khóa readonly được sử dụng để định nghĩa một trường dữ liệu chỉ để đọc (read-only). 
+Khi một trường được khai báo là readonly, nghĩa là giá trị của trường đó chỉ có thể được gán một lần và không thể thay đổi sau đó.
+
+export class UserDTO {
+  readonly id: number;
+  readonly name: string;
+  readonly email: string;
+}
+
+const user = new UserDTO();
+user.id = 1; // Error: Cannot assign to 'id' because it is a read-only property.
+user.name = "John Doe"; // Error: Cannot assign to 'name' because it is a read-only property.
+user.email = "john@example.com"; // Error: Cannot assign to 'email' because it is a read-only property.
+
+
+hot reload: tự động tải lai app sau đó yarn start:dev
+
+một abstract class (lớp trừu tượng) là một lớp mà không thể khởi tạo trực tiếp thành một đối tượng
+
+file controller chỉ nhận data vào và trả data ra. service mới xử lý logic. Ví dụ như lấy data từ db
+
+providers: [{ provide: 'FEED_SERVICE_LH', useClass: FeedService }], useValue, factory
+
+- Trong NestJS, forRoot là một phương thức tĩnh (static method) được sử dụng để cấu hình các module trong ứng dụng Nest. 
+forRoot thường được gọi trong file module chính của ứng dụng (thường là file AppModule).
+
+- forRoot cho phép chúng ta cấu hình các options, providers, và các thiết lập khác của một module. 
+Thông thường, chúng ta sẽ gọi forRoot để cấu hình các module mà chúng ta muốn sử dụng ở cấp ứng dụng hoặc để đăng ký 
+các global providers.
+
+Trong NestJS, forFeature cũng là một phương thức tĩnh (static method) tương tự như forRoot, được sử dụng để cấu hình các module tại mức module con (feature module). 
+forFeature thường được gọi trong các module con để đăng ký các providers, controllers, hoặc các thành phần khác liên quan đến module con đó.
+
+Phương thức forFeature cho phép chúng ta đăng ký các providers và controllers cụ thể cho một module con. 
+Điều này giúp tạo ra một phạm vi hạn chế của các thành phần này chỉ trong phạm vi của module con đó.
+
+port bên ngoài : port docker image 
+3309:3306
+
+
+Đây là generics trong typescript
+Chức năng của Generics là cho phép cùng một hàm có thể chấp nhận các tham số với nhiều kiểu khác nhau. 
+Việc tạo ra các thành phần có thể tái sử dụng với generics tốt hơn sử dụng kiểu any, vì generics bảo tồn kiểu của các biến vào và ra của chúng.
+
